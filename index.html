@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBPL Compiler - English Based Programming Language</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="#" class="logo">
+                <i class="fas fa-code"></i>
+                EBPL Compiler
+            </a>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-play"></i>
+                    Compiler
+                </a>
+                <a href="#" class="nav-link">
+                    <i class="fas fa-book"></i>
+                    Examples
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="title">
+            <i class="fas fa-bullseye"></i>
+            EBPL Online Compiler
+        </h1>
+        
+        <div class="compiler-container">
+            <!-- Editor Panel -->
+            <div class="panel editor-panel">
+                <h3><i class="fas fa-edit"></i> EBPL Code Editor</h3>
+                <textarea id="sourceCode" class="code-editor" placeholder="Enter your EBPL code here... or click 'Example Codes' to get started!"></textarea>
+                
+                <div id="errorMessage" class="error-message"></div>
+
+                <div class="button-group">
+                    <button id="compileBtn" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        <span id="compileText">Compile & Run</span>
+                    </button>
+                    <button id="examplesBtn" class="btn btn-info">
+                        <i class="fas fa-book"></i>
+                        Example Codes
+                    </button>
+                    <button id="saveBtn" class="btn btn-success">
+                        <i class="fas fa-save"></i>
+                        Save Snippet
+                    </button>
+                    <button id="clearBtn" class="btn btn-warning">
+                        <i class="fas fa-redo"></i>
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="panel results-panel">
+                <h3><i class="fas fa-chart-bar"></i> Compilation Results</h3>
+                
+                <div class="tab-container">
+                    <button class="tab active" data-tab="output">
+                        <i class="fas fa-terminal"></i> Output
+                    </button>
+                    <button class="tab" data-tab="tokens">
+                        <i class="fas fa-code"></i> Tokens
+                    </button>
+                    <button class="tab" data-tab="generated">
+                        <i class="fab fa-python"></i> Generated Code
+                    </button>
+                </div>
+
+                <pre id="outputContent" class="output-area">Output will appear here after compilation...</pre>
+                <pre id="tokensContent" class="output-area hidden">No tokens generated yet...</pre>
+                <pre id="generatedContent" class="output-area hidden">No generated code yet...</pre>
+            </div>
+        </div>
+    </main>
+
+    <!-- Examples Modal -->
+    <div id="examplesModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-book"></i> EBPL Example Codes</h3>
+                <button id="closeModal" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="examples-sidebar">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+                <div class="example-content">
+                    <!-- Example content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="compiler-core.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
