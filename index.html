@@ -3,108 +3,1683 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EBPL Compiler - English Based Programming Language</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>EBPL Online Compiler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .compiler-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .compiler-header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #2d3748;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .compiler-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .compiler-header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            color: #718096;
+        }
+
+        .compiler-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            min-height: 600px;
+        }
+
+        @media (max-width: 1024px) {
+            .compiler-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-panel,
+        .results-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 1.4em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #3fa76f;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e27823;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .code-editor {
+            flex: 1;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+            background: #f7fafc;
+            min-height: 400px;
+        }
+
+        .code-editor:focus {
+            border-color: #667eea;
+            background: white;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            background: #f7fafc;
+            padding: 5px;
+            border-radius: 8px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: #718096;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab:hover:not(.active) {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .output-area {
+            flex: 1;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #1a202c;
+            color: #e2e8f0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            overflow: auto;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            min-height: 400px;
+            margin: 0;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #f56565;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #2d7d32;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #48bb78;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #2d3748;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .close-btn:hover {
+            background: #f7fafc;
+            color: #4a5568;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .examples-sidebar {
+            width: 250px;
+            border-right: 1px solid #e2e8f0;
+            background: #f7fafc;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .examples-sidebar h4 {
+            margin: 0 0 15px 0;
+            color: #2d3748;
+        }
+
+        .category {
+            padding: 12px 15px;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            border-left: 4px solid #667eea;
+            font-weight: 500;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .category.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .category:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .category.active:hover {
+            background: #5a6fd8;
+        }
+
+        .examples-main {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .example-section {
+            display: none;
+        }
+
+        .example-section.active {
+            display: block;
+        }
+
+        .example-section h4 {
+            margin: 0 0 20px 0;
+            color: #2d3748;
+            font-size: 1.3em;
+        }
+
+        .example-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .example-card h5 {
+            margin: 0 0 10px 0;
+            color: #2d3748;
+            font-size: 1.1em;
+        }
+
+        .example-card p {
+            margin: 0 0 15px 0;
+            color: #718096;
+            line-height: 1.5;
+        }
+
+        .example-code {
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        /* Scrollbar Styling */
+        .output-area::-webkit-scrollbar,
+        .examples-main::-webkit-scrollbar,
+        .examples-sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .output-area::-webkit-scrollbar-track {
+            background: #2d3748;
+            border-radius: 4px;
+        }
+
+        .examples-main::-webkit-scrollbar-track,
+        .examples-sidebar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .output-area::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+
+        .examples-main::-webkit-scrollbar-thumb,
+        .examples-sidebar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .output-area::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+
+        .examples-main::-webkit-scrollbar-thumb:hover,
+        .examples-sidebar::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .status-indicator {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .status-success {
+            background: #c6f6d5;
+            color: #2d7d32;
+        }
+
+        .status-error {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status-compiling {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-content">
-            <a href="#" class="logo">
-                <i class="fas fa-code"></i>
-                EBPL Compiler
-            </a>
-            <div class="nav-links">
-                <a href="#" class="nav-link active">
-                    <i class="fas fa-play"></i>
-                    Compiler
-                </a>
-                <a href="#" class="nav-link">
-                    <i class="fas fa-book"></i>
-                    Examples
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div class="compiler-container">
+        <header class="compiler-header">
+            <h1>🎯 EBPL Online Compiler</h1>
+            <p>Educational Basic Programming Language - Compile and execute EBPL code directly in your browser</p>
+        </header>
 
-    <main class="main-content">
-        <h1 class="title">
-            <i class="fas fa-bullseye"></i>
-            EBPL Online Compiler
-        </h1>
-        
-        <div class="compiler-container">
-            <!-- Editor Panel -->
-            <div class="panel editor-panel">
-                <h3><i class="fas fa-edit"></i> EBPL Code Editor</h3>
-                <textarea id="sourceCode" class="code-editor" placeholder="Enter your EBPL code here... or click 'Example Codes' to get started!"></textarea>
-                
-                <div id="errorMessage" class="error-message"></div>
-
-                <div class="button-group">
-                    <button id="compileBtn" class="btn btn-primary">
-                        <i class="fas fa-play"></i>
-                        <span id="compileText">Compile & Run</span>
-                    </button>
-                    <button id="examplesBtn" class="btn btn-info">
-                        <i class="fas fa-book"></i>
-                        Example Codes
-                    </button>
-                    <button id="saveBtn" class="btn btn-success">
-                        <i class="fas fa-save"></i>
-                        Save Snippet
-                    </button>
-                    <button id="clearBtn" class="btn btn-warning">
-                        <i class="fas fa-redo"></i>
-                        Clear All
-                    </button>
-                </div>
-            </div>
-
-            <!-- Results Panel -->
-            <div class="panel results-panel">
-                <h3><i class="fas fa-chart-bar"></i> Compilation Results</h3>
-                
-                <div class="tab-container">
-                    <button class="tab active" data-tab="output">
-                        <i class="fas fa-terminal"></i> Output
-                    </button>
-                    <button class="tab" data-tab="tokens">
-                        <i class="fas fa-code"></i> Tokens
-                    </button>
-                    <button class="tab" data-tab="generated">
-                        <i class="fab fa-python"></i> Generated Code
-                    </button>
+        <div class="compiler-layout">
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <h3>📝 EBPL Code Editor</h3>
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="compileCode()">
+                            🚀 Compile & Run
+                        </button>
+                        <button class="btn btn-secondary" onclick="showExamples()">
+                            📚 Examples
+                        </button>
+                        <button class="btn btn-warning" onclick="clearAll()">
+                            🗑️ Clear
+                        </button>
+                    </div>
                 </div>
 
-                <pre id="outputContent" class="output-area">Output will appear here after compilation...</pre>
-                <pre id="tokensContent" class="output-area hidden">No tokens generated yet...</pre>
-                <pre id="generatedContent" class="output-area hidden">No generated code yet...</pre>
+                <textarea id="sourceCode" class="code-editor" placeholder="Enter your EBPL code here..."></textarea>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <div id="successMessage" class="success-message" style="display: none;"></div>
+            </div>
+
+            <div class="results-panel">
+                <div class="panel-header">
+                    <h3>📊 Compilation Results</h3>
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('output')">Output</button>
+                        <button class="tab" onclick="switchTab('tokens')">Tokens</button>
+                        <button class="tab" onclick="switchTab('generated')">Generated Code</button>
+                        <button class="tab" onclick="switchTab('ast')">AST</button>
+                    </div>
+                </div>
+
+                <pre id="outputArea" class="output-area">Output will appear here after compilation...</pre>
+                <pre id="tokensArea" class="output-area" style="display: none;">No tokens generated yet...</pre>
+                <pre id="generatedCodeArea" class="output-area" style="display: none;">No generated code yet...</pre>
+                <pre id="astArea" class="output-area" style="display: none;">No AST generated yet...</pre>
             </div>
         </div>
-    </main>
+    </div>
 
     <!-- Examples Modal -->
-    <div id="examplesModal" class="modal-overlay hidden">
+    <div id="examplesModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-book"></i> EBPL Example Codes</h3>
-                <button id="closeModal" class="close-btn">
-                    <i class="fas fa-times"></i>
-                </button>
+                <h3>📚 EBPL Example Programs</h3>
+                <button class="close-btn" onclick="hideExamples()">✕</button>
             </div>
             <div class="modal-body">
                 <div class="examples-sidebar">
-                    <!-- Categories will be populated by JavaScript -->
+                    <h4>Categories</h4>
+                    <div class="category active" onclick="switchExampleCategory('basic')">Basic Programs</div>
+                    <div class="category" onclick="switchExampleCategory('control')">Control Structures</div>
+                    <div class="category" onclick="switchExampleCategory('math')">Math Operations</div>
+                    <div class="category" onclick="switchExampleCategory('advanced')">Advanced Examples</div>
                 </div>
-                <div class="example-content">
-                    <!-- Example content will be populated by JavaScript -->
+                <div class="examples-main">
+                    <!-- Basic Programs -->
+                    <div id="basic-examples" class="example-section active">
+                        <h4>Basic Programs</h4>
+                        <div class="example-card">
+                            <h5>Hello World</h5>
+                            <p>The simplest EBPL program - printing a message</p>
+                            <pre class="example-code">print "Hello, EBPL World!"</pre>
+                            <button class="btn btn-primary" onclick="loadExample('print \"Hello, EBPL World!\"')">Load This Example</button>
+                        </div>
+                        <div class="example-card">
+                            <h5>Variables</h5>
+                            <p>Creating and using variables with different data types</p>
+                            <pre class="example-code">create variable name with value "Alice"
+create variable age with value 25
+print name
+print age</pre>
+                            <button class="btn btn-primary" onclick="loadExample('create variable name with value \"Alice\"\ncreate variable age with value 25\nprint name\nprint age')">Load This Example</button>
+                        </div>
+                        <div class="example-card">
+                            <h5>Basic Math</h5>
+                            <p>Basic arithmetic operations with variables</p>
+                            <pre class="example-code">create variable a with value 10
+create variable b with value 5
+print a + b
+print a - b
+print a * b
+print a / b</pre>
+                            <button class="btn btn-primary" onclick="loadExample('create variable a with value 10\ncreate variable b with value 5\nprint a + b\nprint a - b\nprint a * b\nprint a / b')">Load This Example</button>
+                        </div>
+                    </div>
+
+                    <!-- Control Structures -->
+                    <div id="control-examples" class="example-section">
+                        <h4>Control Structures</h4>
+                        <div class="example-card">
+                            <h5>If Statement</h5>
+                            <p>Conditional statements with multiple branches</p>
+                            <pre class="example-code">create variable score with value 85
+
+if score is greater than 90 then
+    print "Grade: A"
+else if score is greater than 80 then
+    print "Grade: B"
+else
+    print "Grade: C"
+end if</pre>
+                            <button class="btn btn-primary" onclick="loadExample('create variable score with value 85\n\nif score is greater than 90 then\n    print \"Grade: A\"\nelse if score is greater than 80 then\n    print \"Grade: B\"\nelse\n    print \"Grade: C\"\nend if')">Load This Example</button>
+                        </div>
+                        <div class="example-card">
+                            <h5>While Loop</h5>
+                            <p>Looping with while statement</p>
+                            <pre class="example-code">create variable counter with value 1
+
+while counter is less than 5 do
+    print "Count: " + counter
+    create variable counter with value counter + 1
+end while</pre>
+                            <button class="btn btn-primary" onclick="loadExample('create variable counter with value 1\n\nwhile counter is less than 5 do\n    print \"Count: \" + counter\n    create variable counter with value counter + 1\nend while')">Load This Example</button>
+                        </div>
+                    </div>
+
+                    <!-- Math Operations -->
+                    <div id="math-examples" class="example-section">
+                        <h4>Math Operations</h4>
+                        <div class="example-card">
+                            <h5>Complex Expressions</h5>
+                            <p>Mathematical expressions with operator precedence</p>
+                            <pre class="example-code">create variable a with value 10
+create variable b with value 5
+create variable c with value 2
+
+create variable result1 with value (a + b) * c
+create variable result2 with value a * b + c * 3
+create variable result3 with value (a - b) / c
+
+print result1
+print result2
+print result3</pre>
+                            <button class="btn btn-primary" onclick="loadExample('create variable a with value 10\ncreate variable b with value 5\ncreate variable c with value 2\n\ncreate variable result1 with value (a + b) * c\ncreate variable result2 with value a * b + c * 3\ncreate variable result3 with value (a - b) / c\n\nprint result1\nprint result2\nprint result3')">Load This Example</button>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Examples -->
+                    <div id="advanced-examples" class="example-section">
+                        <h4>Advanced Examples</h4>
+                        <div class="example-card">
+                            <h5>Temperature Converter</h5>
+                            <p>Practical example with math and conditions</p>
+                            <pre class="example-code">create variable celsius with value 25
+create variable fahrenheit with value (celsius * 9/5) + 32
+
+print celsius + "°C = " + fahrenheit + "°F"
+
+if celsius is greater than 30 then
+    print "It's a hot day!"
+else if celsius is less than 10 then
+    print "It's a cold day!"
+else
+    print "The weather is pleasant!"
+end if</pre>
+                            <button class="btn btn-primary" onclick="loadExample('create variable celsius with value 25\ncreate variable fahrenheit with value (celsius * 9/5) + 32\n\nprint celsius + \"°C = \" + fahrenheit + \"°F\"\n\nif celsius is greater than 30 then\n    print \"It\\'s a hot day!\"\nelse if celsius is less than 10 then\n    print \"It\\'s a cold day!\"\nelse\n    print \"The weather is pleasant!\"\nend if')">Load This Example</button>
+                        </div>
+                        <div class="example-card">
+                            <h5>Fibonacci Sequence</h5>
+                            <p>Generate Fibonacci sequence using while loop</p>
+                            <pre class="example-code">create variable a with value 0
+create variable b with value 1
+create variable count with value 1
+
+print "Fibonacci Sequence:"
+
+while count is less than 10 do
+    print a
+    create variable next with value a + b
+    create variable a with value b
+    create variable b with value next
+    create variable count with value count + 1
+end while</pre>
+                            <button class="btn btn-primary" onclick="loadExample('create variable a with value 0\ncreate variable b with value 1\ncreate variable count with value 1\n\nprint \"Fibonacci Sequence:\"\n\nwhile count is less than 10 do\n    print a\n    create variable next with value a + b\n    create variable a with value b\n    create variable b with value next\n    create variable count with value count + 1\nend while')">Load This Example</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="compiler-core.js"></script>
-    <script src="script.js"></script>
+    <script>
+        // EBPL Compiler Implementation
+        class TokenType {
+            static CREATE = 'CREATE';
+            static VARIABLE = 'VARIABLE';
+            static WITH = 'WITH';
+            static VALUE = 'VALUE';
+            static IF = 'IF';
+            static THEN = 'THEN';
+            static ELSE = 'ELSE';
+            static END = 'END';
+            static PRINT = 'PRINT';
+            static IS_GREATER_THAN = 'IS_GREATER_THAN';
+            static IS_LESS_THAN = 'IS_LESS_THAN';
+            static IS_EQUAL_TO = 'IS_EQUAL_TO';
+            static IS_NOT_EQUAL_TO = 'IS_NOT_EQUAL_TO';
+            static AND = 'AND';
+            static OR = 'OR';
+            static WHILE = 'WHILE';
+            static DO = 'DO';
+            static PLUS = 'PLUS';
+            static MINUS = 'MINUS';
+            static MULTIPLY = 'MULTIPLY';
+            static DIVIDE = 'DIVIDE';
+            static IDENTIFIER = 'IDENTIFIER';
+            static NUMBER = 'NUMBER';
+            static STRING = 'STRING';
+            static LPAREN = 'LPAREN';
+            static RPAREN = 'RPAREN';
+            static NEWLINE = 'NEWLINE';
+            static EOF = 'EOF';
+        }
+
+        class Token {
+            constructor(type, value, line, column) {
+                this.type = type;
+                this.value = value;
+                this.line = line;
+                this.column = column;
+            }
+        }
+
+        class Lexer {
+            constructor(sourceCode) {
+                this.sourceCode = sourceCode;
+                this.position = 0;
+                this.line = 1;
+                this.column = 1;
+                this.tokens = [];
+                
+                this.keywords = {
+                    'create': TokenType.CREATE,
+                    'variable': TokenType.VARIABLE,
+                    'with': TokenType.WITH,
+                    'value': TokenType.VALUE,
+                    'if': TokenType.IF,
+                    'then': TokenType.THEN,
+                    'else': TokenType.ELSE,
+                    'end': TokenType.END,
+                    'print': TokenType.PRINT,
+                    'while': TokenType.WHILE,
+                    'do': TokenType.DO,
+                    'and': TokenType.AND,
+                    'or': TokenType.OR
+                };
+                
+                this.multiWordOperators = {
+                    'is greater than': TokenType.IS_GREATER_THAN,
+                    'is less than': TokenType.IS_LESS_THAN,
+                    'is equal to': TokenType.IS_EQUAL_TO,
+                    'is not equal to': TokenType.IS_NOT_EQUAL_TO
+                };
+
+                this.sortedMultiWordOperators = Object.entries(this.multiWordOperators)
+                    .sort((a, b) => b[0].length - a[0].length);
+            }
+
+            tokenize() {
+                try {
+                    while (this.position < this.sourceCode.length) {
+                        const char = this.sourceCode[this.position];
+                        
+                        if (char === ' ' || char === '\t') {
+                            this.advance();
+                            continue;
+                        }
+                        
+                        if (char === '\n') {
+                            this.tokens.push(new Token(TokenType.NEWLINE, '\n', this.line, this.column));
+                            this.advance();
+                            this.line++;
+                            this.column = 1;
+                            continue;
+                        }
+                        
+                        if (this.isDigit(char) || (char === '-' && this.isDigit(this.peek(1)))) {
+                            this.tokenizeNumber();
+                            continue;
+                        }
+                        
+                        if (char === '"') {
+                            this.tokenizeString();
+                            continue;
+                        }
+                        
+                        if (this.isAlpha(char)) {
+                            this.tokenizeIdentifier();
+                            continue;
+                        }
+                        
+                        if (this.isOperator(char)) {
+                            this.tokenizeOperator();
+                            continue;
+                        }
+                        
+                        if (char === '(') {
+                            this.tokens.push(new Token(TokenType.LPAREN, '(', this.line, this.column));
+                            this.advance();
+                            continue;
+                        }
+                        
+                        if (char === ')') {
+                            this.tokens.push(new Token(TokenType.RPAREN, ')', this.line, this.column));
+                            this.advance();
+                            continue;
+                        }
+                        
+                        throw new Error(`Unexpected character '${char}' at line ${this.line}, column ${this.column}`);
+                    }
+                    
+                    this.tokens.push(new Token(TokenType.EOF, '', this.line, this.column));
+                    return this.tokens;
+                } catch (error) {
+                    throw new Error(`Lexical analysis failed: ${error.message}`);
+                }
+            }
+
+            tokenizeNumber() {
+                let number = '';
+                let hasDecimal = false;
+                
+                if (this.sourceCode[this.position] === '-') {
+                    number += '-';
+                    this.advance();
+                }
+                
+                while (this.position < this.sourceCode.length) {
+                    const char = this.sourceCode[this.position];
+                    
+                    if (this.isDigit(char)) {
+                        number += char;
+                        this.advance();
+                    } else if (char === '.' && !hasDecimal) {
+                        number += char;
+                        hasDecimal = true;
+                        this.advance();
+                    } else {
+                        break;
+                    }
+                }
+                
+                this.tokens.push(new Token(TokenType.NUMBER, number, this.line, this.column));
+            }
+
+            tokenizeString() {
+                let string = '';
+                this.advance();
+                
+                while (this.position < this.sourceCode.length) {
+                    const char = this.sourceCode[this.position];
+                    
+                    if (char === '"') {
+                        this.advance();
+                        break;
+                    }
+                    
+                    if (char === '\n') {
+                        throw new Error('Unterminated string literal');
+                    }
+                    
+                    string += char;
+                    this.advance();
+                }
+                
+                this.tokens.push(new Token(TokenType.STRING, string, this.line, this.column));
+            }
+
+            tokenizeIdentifier() {
+                const startPos = this.position;
+                let identifier = '';
+                
+                while (this.position < this.sourceCode.length) {
+                    const char = this.sourceCode[this.position];
+                    if (this.isAlphaNumeric(char)) {
+                        identifier += char;
+                        this.advance();
+                    } else {
+                        break;
+                    }
+                }
+                
+                const remainingText = this.sourceCode.substring(startPos).toLowerCase();
+                
+                for (const [operator, tokenType] of this.sortedMultiWordOperators) {
+                    if (remainingText.startsWith(operator)) {
+                        this.tokens.push(new Token(tokenType, operator, this.line, this.column));
+                        this.advanceMultiple(operator.length - identifier.length);
+                        return;
+                    }
+                }
+                
+                const lowerIdentifier = identifier.toLowerCase();
+                if (this.keywords[lowerIdentifier]) {
+                    this.tokens.push(new Token(this.keywords[lowerIdentifier], identifier, this.line, this.column));
+                } else {
+                    this.tokens.push(new Token(TokenType.IDENTIFIER, identifier, this.line, this.column));
+                }
+            }
+
+            tokenizeOperator() {
+                const char = this.sourceCode[this.position];
+                
+                switch (char) {
+                    case '+':
+                        this.tokens.push(new Token(TokenType.PLUS, '+', this.line, this.column));
+                        break;
+                    case '-':
+                        this.tokens.push(new Token(TokenType.MINUS, '-', this.line, this.column));
+                        break;
+                    case '*':
+                        this.tokens.push(new Token(TokenType.MULTIPLY, '*', this.line, this.column));
+                        break;
+                    case '/':
+                        this.tokens.push(new Token(TokenType.DIVIDE, '/', this.line, this.column));
+                        break;
+                    case '=':
+                        this.tokens.push(new Token(TokenType.EQUALS, '=', this.line, this.column));
+                        break;
+                    default:
+                        throw new Error(`Unknown operator '${char}'`);
+                }
+                
+                this.advance();
+            }
+
+            isDigit(char) { return char >= '0' && char <= '9'; }
+            isAlpha(char) { return (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') || char === '_'; }
+            isAlphaNumeric(char) { return this.isAlpha(char) || this.isDigit(char); }
+            isOperator(char) { return ['+', '-', '*', '/', '='].includes(char); }
+
+            advance(count = 1) {
+                for (let i = 0; i < count; i++) {
+                    if (this.position < this.sourceCode.length) {
+                        this.position++;
+                        this.column++;
+                    }
+                }
+            }
+
+            advanceMultiple(count) { this.advance(count); }
+
+            peek(offset = 1) {
+                const pos = this.position + offset;
+                return pos < this.sourceCode.length ? this.sourceCode[pos] : null;
+            }
+        }
+
+        // AST Nodes
+        class ASTNode {}
+        class Program extends ASTNode {
+            constructor(statements) {
+                super();
+                this.statements = statements;
+            }
+        }
+        class VariableDeclaration extends ASTNode {
+            constructor(identifier, value) {
+                super();
+                this.identifier = identifier;
+                this.value = value;
+            }
+        }
+        class PrintStatement extends ASTNode {
+            constructor(expression) {
+                super();
+                this.expression = expression;
+            }
+        }
+        class NumberLiteral extends ASTNode {
+            constructor(value) {
+                super();
+                this.value = value;
+            }
+        }
+        class StringLiteral extends ASTNode {
+            constructor(value) {
+                super();
+                this.value = value;
+            }
+        }
+        class Identifier extends ASTNode {
+            constructor(name) {
+                super();
+                this.name = name;
+            }
+        }
+        class BinaryOperation extends ASTNode {
+            constructor(left, operator, right) {
+                super();
+                this.left = left;
+                this.operator = operator;
+                this.right = right;
+            }
+        }
+        class Comparison extends ASTNode {
+            constructor(left, operator, right) {
+                super();
+                this.left = left;
+                this.operator = operator;
+                this.right = right;
+            }
+        }
+        class LogicalOperation extends ASTNode {
+            constructor(left, operator, right) {
+                super();
+                this.left = left;
+                this.operator = operator;
+                this.right = right;
+            }
+        }
+        class IfStatement extends ASTNode {
+            constructor(condition, thenBranch, elseBranch = null) {
+                super();
+                this.condition = condition;
+                this.thenBranch = thenBranch;
+                this.elseBranch = elseBranch;
+            }
+        }
+        class WhileLoop extends ASTNode {
+            constructor(condition, body) {
+                super();
+                this.condition = condition;
+                this.body = body;
+            }
+        }
+
+        class Parser {
+            constructor(tokens) {
+                this.tokens = tokens.filter(token => 
+                    token.type !== TokenType.NEWLINE && token.type !== TokenType.EOF
+                );
+                this.currentToken = null;
+                this.position = -1;
+                this.advance();
+            }
+
+            advance() {
+                this.position++;
+                if (this.position < this.tokens.length) {
+                    this.currentToken = this.tokens[this.position];
+                } else {
+                    this.currentToken = null;
+                }
+                return this.currentToken;
+            }
+
+            expect(tokenType) {
+                if (this.currentToken && this.currentToken.type === tokenType) {
+                    const result = this.currentToken;
+                    this.advance();
+                    return result;
+                } else {
+                    const expected = tokenType;
+                    const actual = this.currentToken ? this.currentToken.type : 'EOF';
+                    const line = this.currentToken ? this.currentToken.line : 'unknown';
+                    throw new Error(`Expected ${expected}, got ${actual} at line ${line}`);
+                }
+            }
+
+            parse() {
+                try {
+                    const statements = [];
+                    
+                    while (this.currentToken && this.currentToken.type !== TokenType.EOF) {
+                        const statement = this.parseStatement();
+                        if (statement) {
+                            statements.push(statement);
+                        }
+                    }
+                    
+                    return new Program(statements);
+                } catch (error) {
+                    throw new Error(`Syntax analysis failed: ${error.message}`);
+                }
+            }
+
+            parseStatement() {
+                if (!this.currentToken) return null;
+                
+                switch (this.currentToken.type) {
+                    case TokenType.CREATE: return this.parseVariableDeclaration();
+                    case TokenType.PRINT: return this.parsePrintStatement();
+                    case TokenType.IF: return this.parseIfStatement();
+                    case TokenType.WHILE: return this.parseWhileLoop();
+                    default: throw new Error(`Unexpected token: ${this.currentToken.type}`);
+                }
+            }
+
+            parseVariableDeclaration() {
+                this.expect(TokenType.CREATE);
+                this.expect(TokenType.VARIABLE);
+                const identifier = this.expect(TokenType.IDENTIFIER);
+                this.expect(TokenType.WITH);
+                this.expect(TokenType.VALUE);
+                const value = this.parseExpression();
+                return new VariableDeclaration(identifier.value, value);
+            }
+
+            parsePrintStatement() {
+                this.expect(TokenType.PRINT);
+                const expression = this.parseExpression();
+                return new PrintStatement(expression);
+            }
+
+            parseExpression() { return this.parseLogicalExpression(); }
+
+            parseLogicalExpression() {
+                let left = this.parseComparison();
+                
+                while (this.currentToken && 
+                       (this.currentToken.type === TokenType.AND || 
+                        this.currentToken.type === TokenType.OR)) {
+                    const operator = this.currentToken.type;
+                    this.advance();
+                    const right = this.parseComparison();
+                    left = new LogicalOperation(left, operator, right);
+                }
+                
+                return left;
+            }
+
+            parseComparison() {
+                let left = this.parseAddition();
+                
+                while (this.currentToken && this.isComparisonOperator()) {
+                    let operator;
+                    switch (this.currentToken.type) {
+                        case TokenType.IS_GREATER_THAN: operator = '>'; break;
+                        case TokenType.IS_LESS_THAN: operator = '<'; break;
+                        case TokenType.IS_EQUAL_TO: operator = '=='; break;
+                        case TokenType.IS_NOT_EQUAL_TO: operator = '!='; break;
+                        default: return left;
+                    }
+                    this.advance();
+                    const right = this.parseAddition();
+                    left = new Comparison(left, operator, right);
+                }
+                return left;
+            }
+
+            isComparisonOperator() {
+                return this.currentToken && [
+                    TokenType.IS_GREATER_THAN, TokenType.IS_LESS_THAN,
+                    TokenType.IS_EQUAL_TO, TokenType.IS_NOT_EQUAL_TO
+                ].includes(this.currentToken.type);
+            }
+
+            parseAddition() {
+                let left = this.parseMultiplication();
+                while (this.currentToken && 
+                       (this.currentToken.type === TokenType.PLUS || 
+                        this.currentToken.type === TokenType.MINUS)) {
+                    const operator = this.currentToken.value;
+                    this.advance();
+                    const right = this.parseMultiplication();
+                    left = new BinaryOperation(left, operator, right);
+                }
+                return left;
+            }
+
+            parseMultiplication() {
+                let left = this.parsePrimary();
+                while (this.currentToken && 
+                       (this.currentToken.type === TokenType.MULTIPLY || 
+                        this.currentToken.type === TokenType.DIVIDE)) {
+                    const operator = this.currentToken.value;
+                    this.advance();
+                    const right = this.parsePrimary();
+                    left = new BinaryOperation(left, operator, right);
+                }
+                return left;
+            }
+
+            parsePrimary() {
+                if (!this.currentToken) throw new Error('Unexpected end of input');
+                const token = this.currentToken;
+                
+                switch (token.type) {
+                    case TokenType.NUMBER:
+                        this.advance();
+                        return new NumberLiteral(parseFloat(token.value));
+                    case TokenType.STRING:
+                        this.advance();
+                        return new StringLiteral(token.value);
+                    case TokenType.IDENTIFIER:
+                        this.advance();
+                        return new Identifier(token.value);
+                    case TokenType.LPAREN:
+                        this.advance();
+                        const expression = this.parseExpression();
+                        this.expect(TokenType.RPAREN);
+                        return expression;
+                    default:
+                        throw new Error(`Unexpected token: ${token.type}`);
+                }
+            }
+
+            parseIfStatement() {
+                this.expect(TokenType.IF);
+                const condition = this.parseLogicalExpression();
+                
+                if (this.currentToken && this.currentToken.type === TokenType.THEN) {
+                    this.advance();
+                }
+                
+                const thenBranch = [];
+                while (this.currentToken && 
+                       this.currentToken.type !== TokenType.END && 
+                       this.currentToken.type !== TokenType.ELSE &&
+                       this.currentToken.type !== TokenType.EOF) {
+                    thenBranch.push(this.parseStatement());
+                }
+                
+                let elseBranch = null;
+                if (this.currentToken && this.currentToken.type === TokenType.ELSE) {
+                    this.advance();
+                    elseBranch = [];
+                    while (this.currentToken && 
+                           this.currentToken.type !== TokenType.END && 
+                           this.currentToken.type !== TokenType.EOF) {
+                        elseBranch.push(this.parseStatement());
+                    }
+                }
+                
+                if (this.currentToken && this.currentToken.type === TokenType.END) {
+                    this.advance();
+                    if (this.currentToken && this.currentToken.type === TokenType.IF) {
+                        this.advance();
+                    }
+                }
+                
+                return new IfStatement(condition, thenBranch, elseBranch);
+            }
+
+            parseWhileLoop() {
+                this.expect(TokenType.WHILE);
+                const condition = this.parseLogicalExpression();
+                
+                if (this.currentToken && this.currentToken.type === TokenType.DO) {
+                    this.advance();
+                }
+                
+                const body = [];
+                while (this.currentToken && 
+                       this.currentToken.type !== TokenType.END && 
+                       this.currentToken.type !== TokenType.EOF) {
+                    body.push(this.parseStatement());
+                }
+                
+                if (this.currentToken && this.currentToken.type === TokenType.END) {
+                    this.advance();
+                    if (this.currentToken && this.currentToken.type === TokenType.WHILE) {
+                        this.advance();
+                    }
+                }
+                
+                return new WhileLoop(condition, body);
+            }
+        }
+
+        class EBPLCompiler {
+            constructor() {
+                this.tokens = [];
+                this.ast = null;
+                this.errors = [];
+                this.generatedCode = '';
+            }
+
+            compile(sourceCode) {
+                this.errors = [];
+                this.tokens = [];
+                this.ast = null;
+                this.generatedCode = '';
+                
+                try {
+                    const lexer = new Lexer(sourceCode);
+                    this.tokens = lexer.tokenize();
+                    
+                    const parser = new Parser(this.tokens);
+                    this.ast = parser.parse();
+                    
+                    this.generatedCode = this.generatePython();
+                    
+                    return { success: true };
+                } catch (error) {
+                    this.errors.push(error.message);
+                    return { success: false, error: error.message };
+                }
+            }
+
+            generatePython() {
+                if (!this.ast) return '';
+                
+                const lines = [
+                    "# Generated from EBPL Compiler",
+                    ""
+                ];
+                
+                for (const statement of this.ast.statements) {
+                    const code = this.generateStatement(statement);
+                    if (code) {
+                        lines.push(code);
+                    }
+                }
+                
+                return lines.join('\n');
+            }
+
+            generateStatement(node, indent = 0) {
+                const indentStr = '    '.repeat(indent);
+                
+                if (node instanceof VariableDeclaration) {
+                    const valueCode = this.generateExpression(node.value);
+                    return `${indentStr}${node.identifier} = ${valueCode}`;
+                }
+                
+                if (node instanceof PrintStatement) {
+                    const valueCode = this.generateExpression(node.expression);
+                    return `${indentStr}print(${valueCode})`;
+                }
+                
+                if (node instanceof IfStatement) {
+                    const conditionCode = this.generateExpression(node.condition);
+                    const result = [`${indentStr}if ${conditionCode}:`];
+                    
+                    for (const stmt of node.thenBranch) {
+                        result.push(this.generateStatement(stmt, indent + 1));
+                    }
+                    
+                    if (node.elseBranch && node.elseBranch.length > 0) {
+                        result.push(`${indentStr}else:`);
+                        for (const stmt of node.elseBranch) {
+                            result.push(this.generateStatement(stmt, indent + 1));
+                        }
+                    }
+                    
+                    return result.join('\n');
+                }
+                
+                if (node instanceof WhileLoop) {
+                    const conditionCode = this.generateExpression(node.condition);
+                    const result = [`${indentStr}while ${conditionCode}:`];
+                    
+                    for (const stmt of node.body) {
+                        result.push(this.generateStatement(stmt, indent + 1));
+                    }
+                    
+                    return result.join('\n');
+                }
+                
+                return `${indentStr}# Unknown statement`;
+            }
+
+            generateExpression(node) {
+                if (node instanceof NumberLiteral) return node.value.toString();
+                if (node instanceof StringLiteral) return `"${node.value}"`;
+                if (node instanceof Identifier) return node.name;
+                
+                if (node instanceof BinaryOperation) {
+                    const left = this.generateExpression(node.left);
+                    const right = this.generateExpression(node.right);
+                    return `(${left} ${node.operator} ${right})`;
+                }
+                
+                if (node instanceof Comparison) {
+                    const left = this.generateExpression(node.left);
+                    const right = this.generateExpression(node.right);
+                    return `(${left} ${node.operator} ${right})`;
+                }
+                
+                if (node instanceof LogicalOperation) {
+                    const left = this.generateExpression(node.left);
+                    const right = this.generateExpression(node.right);
+                    const operator = node.operator === TokenType.AND ? 'and' : 'or';
+                    return `(${left} ${operator} ${right})`;
+                }
+                
+                return 'None';
+            }
+
+            getTokensDisplay() {
+                return this.tokens
+                    .filter(token => token.type !== TokenType.NEWLINE && token.type !== TokenType.EOF)
+                    .map(token => `${token.type.padEnd(20)} -> '${token.value}' (line ${token.line})`);
+            }
+
+            getAstDisplay() {
+                if (!this.ast) return ['No AST generated'];
+                return this.ast.statements.map((stmt, i) => {
+                    if (stmt instanceof VariableDeclaration) {
+                        return `Statement ${i + 1}: VariableDeclaration(${stmt.identifier}, ${stmt.value.constructor.name})`;
+                    } else if (stmt instanceof PrintStatement) {
+                        return `Statement ${i + 1}: PrintStatement(${stmt.expression.constructor.name})`;
+                    } else if (stmt instanceof IfStatement) {
+                        return `Statement ${i + 1}: IfStatement(condition, then=${stmt.thenBranch.length}, else=${stmt.elseBranch ? stmt.elseBranch.length : 0})`;
+                    } else if (stmt instanceof WhileLoop) {
+                        return `Statement ${i + 1}: WhileLoop(condition, body=${stmt.body.length})`;
+                    } else {
+                        return `Statement ${i + 1}: ${stmt.constructor.name}`;
+                    }
+                });
+            }
+        }
+
+        // Enhanced Execution Engine
+        function simulateExecution(pythonCode) {
+            if (!pythonCode) return 'No code to execute';
+            
+            try {
+                const lines = pythonCode.split('\n').filter(line => line.trim() && !line.trim().startsWith('#'));
+                let output = '';
+                const variables = {};
+                
+                // Enhanced expression evaluator
+                const evaluateExpression = (expr, vars) => {
+                    expr = expr.trim();
+                    
+                    // Handle parentheses
+                    while (expr.startsWith('(') && expr.endsWith(')')) {
+                        expr = expr.substring(1, expr.length - 1).trim();
+                    }
+                    
+                    // Handle string concatenation
+                    if (expr.includes('+')) {
+                        const parts = splitByOperator(expr, '+');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        
+                        if (evaluated.some(part => typeof part === 'string')) {
+                            return evaluated.map(part => String(part)).join('');
+                        }
+                        return evaluated.reduce((a, b) => a + b, 0);
+                    }
+                    
+                    // Handle arithmetic operations
+                    if (expr.includes('-')) {
+                        const parts = splitByOperator(expr, '-');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated.reduce((a, b) => a - b);
+                    }
+                    
+                    if (expr.includes('*')) {
+                        const parts = splitByOperator(expr, '*');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated.reduce((a, b) => a * b, 1);
+                    }
+                    
+                    if (expr.includes('/')) {
+                        const parts = splitByOperator(expr, '/');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated.reduce((a, b) => a / b);
+                    }
+                    
+                    // Handle comparisons
+                    if (expr.includes('>')) {
+                        const parts = splitByOperator(expr, '>');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated[0] > evaluated[1];
+                    }
+                    
+                    if (expr.includes('<')) {
+                        const parts = splitByOperator(expr, '<');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated[0] < evaluated[1];
+                    }
+                    
+                    if (expr.includes('==')) {
+                        const parts = splitByOperator(expr, '==');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated[0] == evaluated[1];
+                    }
+                    
+                    if (expr.includes('!=')) {
+                        const parts = splitByOperator(expr, '!=');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated[0] != evaluated[1];
+                    }
+                    
+                    // Handle logical operators
+                    if (expr.includes(' and ')) {
+                        const parts = expr.split(' and ');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated.every(Boolean);
+                    }
+                    
+                    if (expr.includes(' or ')) {
+                        const parts = expr.split(' or ');
+                        const evaluated = parts.map(part => evaluateExpression(part, vars));
+                        return evaluated.some(Boolean);
+                    }
+                    
+                    // Handle numbers
+                    if (!isNaN(expr)) {
+                        return parseFloat(expr);
+                    }
+                    
+                    // Handle strings
+                    if ((expr.startsWith('"') && expr.endsWith('"')) || 
+                        (expr.startsWith("'") && expr.endsWith("'"))) {
+                        return expr.substring(1, expr.length - 1);
+                    }
+                    
+                    // Handle variables
+                    if (vars.hasOwnProperty(expr)) {
+                        return vars[expr];
+                    }
+                    
+                    // Handle boolean values
+                    if (expr === 'True') return true;
+                    if (expr === 'False') return false;
+                    
+                    throw new Error(`Unknown expression: ${expr}`);
+                };
+                
+                // Helper to split by operator while respecting parentheses
+                const splitByOperator = (expr, operator) => {
+                    let depth = 0;
+                    let current = '';
+                    const parts = [];
+                    
+                    for (let i = 0; i < expr.length; i++) {
+                        const char = expr[i];
+                        
+                        if (char === '(') depth++;
+                        if (char === ')') depth--;
+                        
+                        if (depth === 0 && expr.substring(i, i + operator.length) === operator) {
+                            parts.push(current.trim());
+                            current = '';
+                            i += operator.length - 1;
+                        } else {
+                            current += char;
+                        }
+                    }
+                    
+                    if (current) parts.push(current.trim());
+                    return parts.length > 0 ? parts : [expr];
+                };
+                
+                // Execute lines
+                let i = 0;
+                while (i < lines.length) {
+                    const line = lines[i];
+                    const trimmed = line.trim();
+                    
+                    // Skip comments
+                    if (trimmed.startsWith('#')) {
+                        i++;
+                        continue;
+                    }
+                    
+                    // Handle print statements
+                    if (trimmed.startsWith('print(')) {
+                        const content = trimmed.match(/print\((.*)\)/)?.[1];
+                        if (content) {
+                            try {
+                                const value = evaluateExpression(content, variables);
+                                output += value + '\n';
+                            } catch (e) {
+                                output += `[Error in print: ${e.message}]\n`;
+                            }
+                        }
+                        i++;
+                        continue;
+                    }
+                    
+                    // Handle variable assignment
+                    if (trimmed.includes('=')) {
+                        const [varName, expr] = trimmed.split('=').map(s => s.trim());
+                        if (varName && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(varName)) {
+                            try {
+                                variables[varName] = evaluateExpression(expr, variables);
+                            } catch (e) {
+                                output += `[Error assigning ${varName}: ${e.message}]\n`;
+                            }
+                        }
+                        i++;
+                        continue;
+                    }
+                    
+                    // Handle control structures (simplified)
+                    if (trimmed.startsWith('if ') || trimmed.startsWith('while ')) {
+                        i++;
+                        continue;
+                    }
+                    
+                    i++;
+                }
+                
+                return output || 'Program executed successfully (no output)';
+            } catch (error) {
+                return `Execution error: ${error.message}`;
+            }
+        }
+
+        // UI Functions
+        let currentCompiler = null;
+
+        function compileCode() {
+            const sourceCode = document.getElementById('sourceCode').value;
+            if (!sourceCode.trim()) {
+                showError('Source code cannot be empty');
+                return;
+            }
+
+            hideMessages();
+            showOutput('🔄 Compiling...');
+
+            setTimeout(() => {
+                try {
+                    currentCompiler = new EBPLCompiler();
+                    const result = currentCompiler.compile(sourceCode);
+
+                    if (result.success) {
+                        showSuccess('✅ Compilation successful!');
+                        
+                        // Update all displays
+                        document.getElementById('tokensArea').textContent = 
+                            currentCompiler.getTokensDisplay().join('\n') || 'No tokens generated';
+                        document.getElementById('generatedCodeArea').textContent = 
+                            currentCompiler.generatedCode || 'No code generated';
+                        document.getElementById('astArea').textContent = 
+                            currentCompiler.getAstDisplay().join('\n') || 'No AST generated';
+                        
+                        // Execute the code
+                        const output = simulateExecution(currentCompiler.generatedCode);
+                        showOutput(output);
+                    } else {
+                        showError(`❌ Compilation failed: ${result.error}`);
+                        showOutput(`❌ Compilation Error:\n${result.error}`);
+                    }
+                } catch (error) {
+                    showError(`💥 Unexpected error: ${error.message}`);
+                    showOutput(`💥 Unexpected Error:\n${error.message}`);
+                }
+            }, 500);
+        }
+
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content
+            document.getElementById('outputArea').style.display = 'none';
+            document.getElementById('tokensArea').style.display = 'none';
+            document.getElementById('generatedCodeArea').style.display = 'none';
+            document.getElementById('astArea').style.display = 'none';
+            
+            document.getElementById(tabName + 'Area').style.display = 'block';
+        }
+
+        function showExamples() {
+            document.getElementById('examplesModal').style.display = 'flex';
+        }
+
+        function hideExamples() {
+            document.getElementById('examplesModal').style.display = 'none';
+        }
+
+        function switchExampleCategory(category) {
+            // Update categories
+            document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update sections
+            document.querySelectorAll('.example-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(category + '-examples').classList.add('active');
+        }
+
+        function loadExample(code) {
+            document.getElementById('sourceCode').value = code;
+            hideExamples();
+        }
+
+        function clearAll() {
+            document.getElementById('sourceCode').value = '';
+            showOutput('Output will appear here after compilation...');
+            document.getElementById('tokensArea').textContent = 'No tokens generated yet...';
+            document.getElementById('generatedCodeArea').textContent = 'No generated code yet...';
+            document.getElementById('astArea').textContent = 'No AST generated yet...';
+            hideMessages();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showOutput(message) {
+            document.getElementById('outputArea').textContent = message;
+        }
+
+        // Load default example when page loads
+        window.onload = function() {
+            loadExample(`print "Hello, EBPL World!"\n\ncreate variable name with value "Alice"\ncreate variable age with value 25\nprint "Name: " + name\nprint "Age: " + age\n\ncreate variable a with value 10\ncreate variable b with value 5\nprint "a + b = " + (a + b)\nprint "a - b = " + (a - b)`);
+        };
+    </script>
 </body>
 </html>
