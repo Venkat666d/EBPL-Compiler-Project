@@ -1,0 +1,16 @@
+{
+  "name": "ebpl-final",
+  "version": "1.0.0",
+  "description": "EBPL Online Compiler with Authentication",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "vercel": "^28.0.0"
+  }
+}

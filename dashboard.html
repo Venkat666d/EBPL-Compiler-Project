@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBPL Compiler - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>🎯 EBPL Online Compiler</h1>
+                <p>Welcome back, <span id="userName">User</span>!</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="viewProfile()">
+                    👤 Profile
+                </button>
+                <button class="btn btn-warning" onclick="logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="dashboard-content">
+            <div class="welcome-section">
+                <h2>Ready to Code?</h2>
+                <p>Start coding in EBPL (English Based Programming Language) with our interactive compiler.</p>
+                <button class="btn btn-primary btn-large" onclick="goToCompiler()">
+                    🚀 Open Compiler
+                </button>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-card">
+                    <h3>📊 Your Stats</h3>
+                    <div class="stat-item">
+                        <span>Programs Compiled:</span>
+                        <span id="programsCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>Member Since:</span>
+                        <span id="memberSince">-</span>
+                    </div>
+                </div>
+
+                <div class="recent-activity">
+                    <h3>📝 Recent Activity</h3>
+                    <div id="recentActivity" class="activity-list">
+                        <p>No recent activity yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
