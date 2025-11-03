@@ -49,6 +49,28 @@
             color: #718096;
         }
 
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-text {
+            text-align: left;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-welcome {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
         .compiler-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -59,6 +81,11 @@
         @media (max-width: 1024px) {
             .compiler-layout {
                 grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
             }
         }
 
@@ -460,10 +487,51 @@
     </style>
 </head>
 <body>
+    <!-- Authentication Check -->
+    <script>
+        // Check if user is authenticated
+        (function() {
+            const token = localStorage.getItem('ebpl_token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Simple token expiration check
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                if (payload.exp * 1000 <= Date.now()) {
+                    localStorage.removeItem('ebpl_token');
+                    localStorage.removeItem('ebpl_user');
+                    window.location.href = 'auth.html';
+                }
+            } catch {
+                localStorage.removeItem('ebpl_token');
+                localStorage.removeItem('ebpl_user');
+                window.location.href = 'auth.html';
+            }
+        })();
+    </script>
+
     <div class="compiler-container">
         <header class="compiler-header">
-            <h1>🎯 EBPL Online Compiler</h1>
-            <p>English Based Programming language</p>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>🎯 EBPL Online Compiler</h1>
+                    <p>English Based Programming language</p>
+                </div>
+                <div class="user-info">
+                    <span class="user-welcome" id="userWelcome">Welcome, User!</span>
+                    <div class="button-group">
+                        <button class="btn btn-secondary" onclick="viewProfile()">
+                            👤 Profile
+                        </button>
+                        <button class="btn btn-warning" onclick="logout()">
+                            🚪 Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <div class="compiler-layout">
@@ -651,6 +719,31 @@ end while</pre>
     </div>
 
     <script>
+        // Authentication Functions
+        function viewProfile() {
+            alert('Profile feature coming soon!');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('ebpl_token');
+                localStorage.removeItem('ebpl_user');
+                window.location.href = 'auth.html';
+            }
+        }
+
+        // Load user info on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = localStorage.getItem('ebpl_user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                document.getElementById('userWelcome').textContent = `Welcome, ${user.name || 'User'}!`;
+            }
+            
+            // Load default example
+            loadExample(`print "Hello, EBPL World!"\n\ncreate variable name with value "Alice"\ncreate variable age with value 25\nprint "Name: " + name\nprint "Age: " + age`);
+        });
+
         // EBPL Compiler Implementation
         class TokenType {
             static CREATE = 'CREATE';
@@ -1675,11 +1768,6 @@ end while</pre>
         function showOutput(message) {
             document.getElementById('outputArea').textContent = message;
         }
-
-        // Load default example when page loads
-        window.onload = function() {
-            loadExample(`print "Hello, EBPL World!"\n\ncreate variable name with value "Alice"\ncreate variable age with value 25\nprint "Name: " + name\nprint "Age: " + age`);
-        };
     </script>
 </body>
 </html>
